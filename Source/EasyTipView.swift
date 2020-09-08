@@ -23,7 +23,7 @@
 
 import UIKit
 
-public protocol EasyTipViewDelegate : class {
+@objc public protocol EasyTipViewDelegate : class {
     func easyTipViewDidDismiss(_ tipView : EasyTipView)
 }
 
@@ -191,7 +191,7 @@ extension EasyTipView: UIGestureRecognizerDelegate {
 
 // MARK: - EasyTipView class implementation -
 
-open class EasyTipView: UIView {
+@objc open class EasyTipView: UIView {
     
     // MARK:- Nested types -
     
