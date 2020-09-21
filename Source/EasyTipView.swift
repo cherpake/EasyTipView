@@ -140,6 +140,18 @@ public extension EasyTipView {
         transform = initialTransform
         alpha = initialAlpha
         
+        if preferences.hasCover {
+            let coverView = UIView(frame: superview.bounds)
+            coverView.backgroundColor = UIColor.black.withAlphaComponent(0.25)
+            coverView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            coverView.alpha = 0
+            superview.addSubview(coverView)
+            
+            let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+            coverView.addGestureRecognizer(tap)
+            self.coverView = coverView
+        }
+        
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         tap.delegate = self
         addGestureRecognizer(tap)
@@ -149,6 +161,7 @@ public extension EasyTipView {
         let animations : () -> () = {
             self.transform = finalTransform
             self.alpha = 1
+            self.coverView?.alpha = 1
         }
         
         if animated {
@@ -171,10 +184,12 @@ public extension EasyTipView {
         UIView.animate(withDuration: preferences.animating.dismissDuration, delay: 0, usingSpringWithDamping: damping, initialSpringVelocity: velocity, options: [.curveEaseInOut], animations: { 
             self.transform = self.preferences.animating.dismissTransform
             self.alpha = self.preferences.animating.dismissFinalAlpha
+            self.coverView?.alpha = self.preferences.animating.dismissFinalAlpha
         }) { (finished) -> Void in
             completion?()
             self.delegate?.easyTipViewDidDismiss(self)
             self.removeFromSuperview()
+            self.coverView?.removeFromSuperview()
             self.transform = CGAffineTransform.identity
         }
     }
@@ -256,6 +271,8 @@ extension EasyTipView: UIGestureRecognizerDelegate {
             return drawing.shadowOpacity > 0 && drawing.shadowColor != UIColor.clear
         }
         
+        public var hasCover : Bool = false
+        
         public init() {}
     }
     
@@ -293,6 +310,7 @@ extension EasyTipView: UIGestureRecognizerDelegate {
         return "<< \(type) with \(content) >>"
     }
     
+    fileprivate weak var coverView: UIView? = nil
     fileprivate weak var presentingView: UIView?
     fileprivate weak var delegate: EasyTipViewDelegate?
     fileprivate var arrowTip = CGPoint.zero

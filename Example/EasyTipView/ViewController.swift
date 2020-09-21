@@ -84,6 +84,7 @@ class ViewController: UIViewController, EasyTipViewDelegate {
             preferences.drawing.shadowColor = UIColor.black
             preferences.drawing.shadowRadius = 2
             preferences.drawing.shadowOpacity = 0.75
+            preferences.hasCover = true
             
             let tip = EasyTipView(text: text, preferences: preferences, delegate: self)
             tip.show(forItem: toolbarItem)
