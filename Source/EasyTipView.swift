@@ -147,12 +147,12 @@ public extension EasyTipView {
             coverView.alpha = 0
             superview.addSubview(coverView)
             
-            let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+            let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
             coverView.addGestureRecognizer(tap)
             self.coverView = coverView
         }
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         tap.delegate = self
         addGestureRecognizer(tap)
         
@@ -176,8 +176,7 @@ public extension EasyTipView {
      
      - parameter completion: Completion block to be executed after the EasyTipView is dismissed.
      */
-    func dismiss(withCompletion completion: (() -> ())? = nil){
-        
+    func dismiss(withCompletion completion: (() -> ())? = nil) {
         let damping = preferences.animating.springDamping
         let velocity = preferences.animating.springVelocity
         
@@ -523,7 +522,11 @@ extension EasyTipView: UIGestureRecognizerDelegate {
     
     // MARK:- Callbacks -
     
-    @objc func handleTap() {
+    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+        // Make sure that on dismiss we don't call our delegate
+        if sender.view == coverView {
+            delegate = nil
+        }
         dismiss()
     }
     
